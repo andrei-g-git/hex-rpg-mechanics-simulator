@@ -1,0 +1,21 @@
+.adjustable-stat{
+    display: flex;
+    gap: 8px;
+}
+.name-and-value{
+    display: flex;
+}
+
+.stat-value{
+    color: blue;
+}
+
+.gear{
+    padding: 6px 0;
+    margin: 6px 0;
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
