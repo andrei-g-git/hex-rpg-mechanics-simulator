@@ -55,12 +55,30 @@ const gear: GearWithStats[] = [
     }   
 ];
 
+const buffs = [
+    {
+        name: "foo",
+        duration: 2
+    },
+    {
+        name: "bar",
+        duration: 1
+    },
+    {
+        name: "baz",
+        duration: 69
+    },        
+];
 
-const ActorCard = ({_hp, _energy, _strength, _agility, _constitution, _intelligence, _head="leather cap", _body="quilted armor", _feet="leather boots", _shield="wooden buckler", _weapon="club"}:{
-    _hp: number, _energy: number, _strength: number, _agility: number, _constitution: number, _intelligence: number, _head?:Head, _body?:Body, _feet?:Feet, _shield?:Shield, _weapon?:Weapon    
+const ActorCard = ({_hp, _fire, _wind, _earth, _water, _strength, _agility, _constitution, _intelligence, _head="leather cap", _body="quilted armor", _feet="leather boots", _shield="wooden buckler", _weapon="club"}:{
+    _hp: number, _fire: number, _wind: number, _earth: number, _water: number, _strength: number, _agility: number, _constitution: number, _intelligence: number, _head?:Head, _body?:Body, _feet?:Feet, _shield?:Shield, _weapon?:Weapon    
 }) => {
     const [hp, setHp] = useState(_hp);
-    const [en, setEnergy] = useState(_energy);
+    //const [en, setEnergy] = useState(_energy);
+    const [fire, setFire] = useState(_fire);
+    const [wind, setWind] = useState(_wind);
+    const [earth, setEarth] = useState(_earth);
+    const [water, setWater] = useState(_water);
 
     const [str, setStr] = useState(_strength);
     const [agi, setAgi] = useState(_agility);
@@ -84,17 +102,40 @@ const ActorCard = ({_hp, _energy, _strength, _agility, _constitution, _intellige
 
     return(
         <>
-            <div className="HP-EN">
+            {/* <div className="HP-EN"> */}
                 <AdjustableStat name="HP"
                     state={hp}
                     setState={setHp}
                 />
 
-                <AdjustableStat name="EN"
+                {/* <AdjustableStat name="EN"
                     state={en}
                     setState={setEnergy}
-                />              
+                />               */}
+            {/* </div> */}
+
+            <div className="divider"></div>
+
+            <div className="energies">
+                <AdjustableStat name="fire"
+                    state={fire}
+                    setState={setFire}
+                />    
+                <AdjustableStat name="wind"
+                    state={wind}
+                    setState={setWind}
+                /> 
+                <AdjustableStat name="earth"
+                    state={earth}
+                    setState={setEarth}
+                /> 
+                <AdjustableStat name="water"
+                    state={water}
+                    setState={setWater}
+                />                                                             
             </div>
+
+            <div className="divider"></div>
 
             <div className="attributes">
                 <AdjustableStat name="Str"
@@ -115,6 +156,8 @@ const ActorCard = ({_hp, _energy, _strength, _agility, _constitution, _intellige
                 />                                                
             </div>
 
+            <div className="divider"></div>
+
             <div className="gear">
                 Gear
                 <Item items={headGear} gear={gear} damage={damage} setDamage={setDamage} defense={defense} setDefense={setDefense}/>
@@ -123,6 +166,8 @@ const ActorCard = ({_hp, _energy, _strength, _agility, _constitution, _intellige
                 <Item items={shields} gear={gear} damage={damage} setDamage={setDamage} defense={defense} setDefense={setDefense}/>
                 <Item items={weapons} gear={gear} damage={damage} setDamage={setDamage} defense={defense} setDefense={setDefense}/>
             </div>
+
+            <div className="divider"></div>
 
             <div className="derived-stats">
                 <AdjustableStat name="Dam"
@@ -135,15 +180,21 @@ const ActorCard = ({_hp, _energy, _strength, _agility, _constitution, _intellige
                 />                                
             </div>
 
+            <div className="divider"></div>
+
             <div className="buffs">
 
             </div>
 
 
+            <div className="divider"></div>
+
             <div className="debuffs">
                 
             </div>
 
+
+            <div className="divider"></div>
 
             <div className="skill-pool">
                 
@@ -234,8 +285,15 @@ const Item = ({items, gear, damage, setDamage, defense, setDefense}: {items:Gear
 }
 
 //TODO
-const Buff = () => {
+const Buff = ({name, maxDuration}:{name:string, maxDuration:number}) => {
+    const [turnsLeft, setTurnsLeft] = useState(maxDuration);
 
+    return(
+        <AdjustableStat name={name}
+            state={turnsLeft}
+            setState={setTurnsLeft}
+        />
+    );
 }
 
 

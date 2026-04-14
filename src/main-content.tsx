@@ -48,11 +48,13 @@ const MainContent = () => {
                 </ul>     
             </div>
 
-
             <div className="actors">
                 <div className="player">
                     <ActorCard _hp={10} 
-                    _energy={12} 
+                    _fire={5} 
+                    _wind={5} 
+                    _earth={5} 
+                    _water={5} 
                     _strength={10} 
                     _agility={7} 
                     _constitution={10} 
@@ -90,6 +92,11 @@ const generateRandomizedTiles = (tileCount: number): JSX.Element[] => {
     }   
     return iconList;     
 }
+
+
+
+
+
 
 export {
     MainContent
