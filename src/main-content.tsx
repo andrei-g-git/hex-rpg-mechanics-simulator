@@ -12,6 +12,7 @@ type Tiles = typeof Melee | typeof Ranged | typeof Defensive | typeof Tech;
 const MainContent = () => {
     const [tileCount, setTileCount] = useState(0);
     const [someBool, setSomeBool] = useState(false);
+    const [turn, setTurn] = useState(0);
 
     return(
         <>
@@ -48,9 +49,14 @@ const MainContent = () => {
                 </ul>     
             </div>
 
+            <br/>
+            <button onClick={() => setTurn(turn + 1)}>Next Turn</button>
+            <br/>
+
             <div className="actors">
                 <div className="player">
-                    <ActorCard _hp={10} 
+                    <ActorCard turn={turn}
+                    _hp={10} 
                     _fire={5} 
                     _wind={5} 
                     _earth={5} 

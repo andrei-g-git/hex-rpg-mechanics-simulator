@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type SetStateAction } from "react";
-import type { Dispatch } from "react";
+import type { Dispatch, JSX } from "react";
 import "./actor-card.css";
 
 const headGear = ["leather cap" , "skull cap"];
@@ -55,24 +55,22 @@ const gear: GearWithStats[] = [
     }   
 ];
 
-const buffs = [
-    {
-        name: "foo",
-        duration: 2
-    },
-    {
-        name: "bar",
-        duration: 1
-    },
-    {
-        name: "baz",
-        duration: 69
-    },        
-];
+const effects = ["foo","bar","baz",];
+type BaseEffect = typeof effects[number];
 
-const ActorCard = ({_hp, _fire, _wind, _earth, _water, _strength, _agility, _constitution, _intelligence, _head="leather cap", _body="quilted armor", _feet="leather boots", _shield="wooden buckler", _weapon="club"}:{
-    _hp: number, _fire: number, _wind: number, _earth: number, _water: number, _strength: number, _agility: number, _constitution: number, _intelligence: number, _head?:Head, _body?:Body, _feet?:Feet, _shield?:Shield, _weapon?:Weapon    
+type FullEffect = {
+    name:BaseEffect,
+    magnitude:number,
+    duration:number
+};
+
+const trackedEffects:FullEffect[] = [];
+
+const ActorCard = ({turn, _hp, _fire, _wind, _earth, _water, _strength, _agility, _constitution, _intelligence, _head="leather cap", _body="quilted armor", _feet="leather boots", _shield="wooden buckler", _weapon="club"}:{
+    turn: number, _hp: number, _fire: number, _wind: number, _earth: number, _water: number, _strength: number, _agility: number, _constitution: number, _intelligence: number, _head?:Head, _body?:Body, _feet?:Feet, _shield?:Shield, _weapon?:Weapon    
 }) => {
+    //const [turn, setTurn] = useState(_turn);
+
     const [hp, setHp] = useState(_hp);
     //const [en, setEnergy] = useState(_energy);
     const [fire, setFire] = useState(_fire);
@@ -183,7 +181,10 @@ const ActorCard = ({_hp, _fire, _wind, _earth, _water, _strength, _agility, _con
             <div className="divider"></div>
 
             <div className="buffs">
-
+                <EffectTracker effects={effects}
+                    trackedEffects={trackedEffects}
+                    turn={turn}
+                />
             </div>
 
 
@@ -285,7 +286,7 @@ const Item = ({items, gear, damage, setDamage, defense, setDefense}: {items:Gear
 }
 
 //TODO
-const Buff = ({name, maxDuration}:{name:string, maxDuration:number}) => {
+const AdjustableEffect = ({name, maxDuration}:{name:string, maxDuration:number}) => {
     const [turnsLeft, setTurnsLeft] = useState(maxDuration);
 
     return(
@@ -296,6 +297,95 @@ const Buff = ({name, maxDuration}:{name:string, maxDuration:number}) => {
     );
 }
 
+const EffectTracker = ({effects, trackedEffects, turn}:{effects:BaseEffect[], trackedEffects:FullEffect[], turn:number}) => {
+    const [selected, setSelected] = useState(0);
+    const [magnitude, setMagnitude] = useState(1);
+    const [duration, setDuration] = useState(1);
+    ///const [activeEffects, setActiveEffects] = useState<FullEffect[]>(null);
+    const [rerender, setRerender] = useState(false);
+
+    useEffect(() => {
+        console.log("turn changed")
+        trackedEffects.forEach(element => {
+            element.duration -= 1;
+            if(element.duration < 0) element.duration = 0;
+        });
+        console.log("tracked effects with updated durations:  ", trackedEffects);
+        setRerender(!rerender);
+    },
+        [turn, trackedEffects.length]
+    )
+
+    return(
+        <div>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    trackedEffects.push({
+                        name:effects[selected],
+                        magnitude:magnitude,
+                        duration:duration
+                    });
+                    console.log(trackedEffects);
+                    //setActiveEffects(trackedEffects);
+                    setRerender(!rerender);
+                }}
+            >
+                <select value={effects[selected]}
+                    onChange={(e) => setSelected(effects.indexOf(e.target.value as BaseEffect))}
+                >
+                    {
+                        effects.map(item =>
+                            <option key={item}
+                                value={item}
+                            >
+                                {item}
+                            </option>
+                        )
+                    }                
+                </select>
+
+                <div>magnitude: </div>
+                <input type="number" 
+                    min={-3}
+                    max={3}
+                    step={1}
+                    value={magnitude}
+                    onChange={(e) => setMagnitude(Number(e.target.value))}
+                />
+                <div>duration: </div>
+                <input type="number" 
+                    min={-3}
+                    max={3}
+                    step={1}
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                />    
+
+                <button
+                    type="submit"
+                >
+                    Add the Effect
+                </button>
+            </form>
+
+            <ul>
+                {
+                    trackedEffects.map(el => 
+                        <AdjustableEffect key={el.name}
+                            name={`${el.name} ${el.magnitude >= 0? " +" : ""}${el.magnitude}, duration `}
+                            maxDuration={el.duration}
+                        />
+                    )
+                }
+            </ul>
+        </div>
+    );
+}
+
+const handleAddEffect = (e) => {
+    e.preventDefault();
+}
 
 export {
     ActorCard
